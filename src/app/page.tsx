@@ -59,7 +59,7 @@ export default function Home() {
         throw new Error("API Key is missing. Please check your Render environment variables.");
       }
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
       // Extract the actual MIME type (e.g., image/png, image/jpeg)
       const mimeType = base64Image.split(';')[0].split(':')[1];
