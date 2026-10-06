@@ -32,11 +32,12 @@ export default function Home() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<null | typeof PRODUCTS.acne>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Handle the image selected from the phone
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setErrorMessage(null); 
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImage(reader.result as string);
@@ -46,16 +47,22 @@ export default function Home() {
     }
   };
 
-  // Send the image to Google Gemini API
   const analyzeImage = async (base64Image: string) => {
     setIsScanning(true);
     setScanResult(null);
+    setErrorMessage(null);
     
     try {
       const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      
+      if (!apiKey) {
+        throw new Error("API Key is missing. Please check your Render environment variables.");
+      }
+
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-      // Remove the "data:image/jpeg;base64," part before sending
+      // Extract the actual MIME type (e.g., image/png, image/jpeg)
+      const mimeType = base64Image.split(';')[0].split(':')[1];
       const base64Data = base64Image.split(',')[1];
 
       const response = await fetch(url, {
@@ -65,17 +72,21 @@ export default function Home() {
           contents: [{
             parts: [
               { text: "Analyze this face image. Reply with ONLY ONE word from this list based on the primary skin concern: 'acne', 'glow', or 'scar'." },
-              { inline_data: { mime_type: "image/jpeg", data: base64Data } }
+              { inline_data: { mime_type: mimeType, data: base64Data } }
             ]
           }]
         })
       });
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || "API request failed. Check the console.");
+      }
+
       const aiResponse = data.candidates[0].content.parts[0].text.toLowerCase();
       console.log("AI Response:", aiResponse);
 
-      // Match AI response to our products
       if (aiResponse.includes("acne") || aiResponse.includes("pimple")) {
         setScanResult(PRODUCTS.acne);
       } else if (aiResponse.includes("glow") || aiResponse.includes("dull")) {
@@ -83,12 +94,11 @@ export default function Home() {
       } else if (aiResponse.includes("scar") || aiResponse.includes("mark")) {
         setScanResult(PRODUCTS.scar);
       } else {
-        // Default to acne if AI is unsure
-        setScanResult(PRODUCTS.acne);
+        setScanResult(PRODUCTS.acne); 
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error analyzing image:", error);
-      alert("There was an error analyzing the image. Please try again.");
+      setErrorMessage(error.message || "Unknown error occurred.");
     } finally {
       setIsScanning(false);
     }
@@ -128,7 +138,8 @@ export default function Home() {
         <div className="flex flex-col items-center gap-6">
           {selectedImage && (
             <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-paraherb-blush shadow-lg">
-              <Image src={selectedImage} alt="Your Face" fill className="object-cover" />
+              {/* Using standard img tag for base64 preview to avoid Next.js config issues */}
+              <img src={selectedImage} alt="Your Face" className="w-full h-full object-cover" />
             </div>
           )}
 
@@ -152,6 +163,13 @@ export default function Home() {
               </>
             )}
           </label>
+
+          {/* Error Message Box */}
+          {errorMessage && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl max-w-lg mx-auto mt-4 text-sm text-left w-full">
+              <strong>Error:</strong> {errorMessage}
+            </div>
+          )}
         </div>
       </section>
 
