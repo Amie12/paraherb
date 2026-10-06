@@ -10,10 +10,10 @@ const config: Config = {
     extend: {
       colors: {
         paraherb: {
-          green: "#1A3B2A", // Deep Forest Green from your logo
-          gold: "#D4AF37",   // Gold from your jar lid
-          cream: "#F9F9F6",  // Soft background
-          text: "#333333",
+          sage: "#8DA37F",      // Soft natural green
+          blush: "#F4D3D3",     // Gentle face-care pink/peach
+          charcoal: "#333333",  // Soft dark gray (easier on the eyes than black)
+          base: "#FDFBF7",      // Warm, clean off-white
         },
       },
     },
