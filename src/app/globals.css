@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-paraherb-cream text-paraherb-text antialiased;
+    @apply bg-paraherb-base text-paraherb-charcoal antialiased;
   }
 }
 
