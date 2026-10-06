@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import Image from "next/image";
-import { Camera, ShieldCheck, Leaf, Phone, Mail, MapPin } from "lucide-react";
+import { Camera, ShieldCheck, Leaf, Phone, Mail, MapPin, Upload } from "lucide-react";
 
-// Product Data directly inside the file
 const PRODUCTS = {
   acne: {
     id: "acne",
@@ -17,14 +16,14 @@ const PRODUCTS = {
     id: "glow",
     name: "Golden Glow Herbal Pack",
     desc: "Restores radiance and deeply nourishes dull skin for a natural, healthy glow.",
-    image: "/golden-glow.jpg",
+    image: "/golden-glow.png",
     tag: "Radiance"
   },
   scar: {
     id: "scar",
     name: "Burn Scar Specialist",
     desc: "Advanced herbal care targeting burn marks and tough scarring.",
-    image: "/burn-scar.jpg",
+    image: "/burn-scar.png",
     tag: "Specialized"
   }
 };
@@ -32,17 +31,67 @@ const PRODUCTS = {
 export default function Home() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<null | typeof PRODUCTS.acne>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const handleScan = () => {
+  // Handle the image selected from the phone
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+        analyzeImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Send the image to Google Gemini API
+  const analyzeImage = async (base64Image: string) => {
     setIsScanning(true);
     setScanResult(null);
     
-    setTimeout(() => {
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+      // Remove the "data:image/jpeg;base64," part before sending
+      const base64Data = base64Image.split(',')[1];
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: "Analyze this face image. Reply with ONLY ONE word from this list based on the primary skin concern: 'acne', 'glow', or 'scar'." },
+              { inline_data: { mime_type: "image/jpeg", data: base64Data } }
+            ]
+          }]
+        })
+      });
+
+      const data = await response.json();
+      const aiResponse = data.candidates[0].content.parts[0].text.toLowerCase();
+      console.log("AI Response:", aiResponse);
+
+      // Match AI response to our products
+      if (aiResponse.includes("acne") || aiResponse.includes("pimple")) {
+        setScanResult(PRODUCTS.acne);
+      } else if (aiResponse.includes("glow") || aiResponse.includes("dull")) {
+        setScanResult(PRODUCTS.glow);
+      } else if (aiResponse.includes("scar") || aiResponse.includes("mark")) {
+        setScanResult(PRODUCTS.scar);
+      } else {
+        // Default to acne if AI is unsure
+        setScanResult(PRODUCTS.acne);
+      }
+    } catch (error) {
+      console.error("Error analyzing image:", error);
+      alert("There was an error analyzing the image. Please try again.");
+    } finally {
       setIsScanning(false);
-      const results = [PRODUCTS.acne, PRODUCTS.glow, PRODUCTS.scar];
-      const randomResult = results[Math.floor(Math.random() * results.length)];
-      setScanResult(randomResult);
-    }, 3000); 
+    }
   };
 
   return (
@@ -75,28 +124,39 @@ export default function Home() {
           Scan your face with our smart AI to discover the perfect Paraherb formula for your unique skin concerns.
         </p>
         
-        {/* The Scanner Button */}
-        <button 
-          onClick={handleScan}
-          disabled={isScanning}
-          className="bg-paraherb-sage text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3 mx-auto disabled:opacity-70 disabled:hover:scale-100"
-        >
-          {isScanning ? (
-            <span className="animate-pulse flex items-center gap-2">
-              <Camera className="animate-spin" size={24} />
-              Analyzing Skin...
-            </span>
-          ) : (
-            <>
-              <Camera size={24} />
-              Start Free Face Scan
-            </>
+        {/* The Scanner Button & Image Preview */}
+        <div className="flex flex-col items-center gap-6">
+          {selectedImage && (
+            <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-paraherb-blush shadow-lg">
+              <Image src={selectedImage} alt="Your Face" fill className="object-cover" />
+            </div>
           )}
-        </button>
+
+          <label className="bg-paraherb-sage text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3 cursor-pointer disabled:opacity-70">
+            {isScanning ? (
+              <span className="animate-pulse flex items-center gap-2">
+                <Camera className="animate-spin" size={24} />
+                Analyzing Skin...
+              </span>
+            ) : (
+              <>
+                <Upload size={24} />
+                {selectedImage ? "Scan Another Photo" : "Upload Photo & Scan"}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleImageUpload}
+                  disabled={isScanning}
+                />
+              </>
+            )}
+          </label>
+        </div>
       </section>
 
       {/* Results Section */}
-      {scanResult && (
+      {scanResult && !isScanning && (
         <section id="products" className="py-12 px-4 max-w-4xl mx-auto w-full">
           <div className="bg-white rounded-3xl shadow-xl p-8 border border-paraherb-sage/20 flex flex-col md:flex-row gap-8 items-center">
             <div className="w-full md:w-1/3 bg-paraherb-base rounded-2xl p-6 flex justify-center items-center">
