@@ -8,7 +8,7 @@ import { Camera, ShieldCheck, Leaf, Phone, Mail, MapPin } from "lucide-react";
 const PRODUCTS = {
   acne: {
     id: "acne",
-    name: "Anti-Pimple | Anti-Acne Skin Glow Formula",
+    name: "Anti-Pimple | Anti-Acne Formula",
     desc: "Specifically formulated to fight active breakouts and prevent new ones. 100% Herbal & Natural.",
     image: "/jar-image.jpg", 
     tag: "Best Seller"
@@ -33,7 +33,6 @@ export default function Home() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<null | typeof PRODUCTS.acne>(null);
 
-  // Simulated AI Scan Logic
   const handleScan = () => {
     setIsScanning(true);
     setScanResult(null);
@@ -47,30 +46,30 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-paraherb-cream text-paraherb-text">
+    <div className="min-h-screen flex flex-col font-sans">
       
       {/* Navigation */}
       <nav className="flex justify-between items-center p-6 bg-white shadow-sm sticky top-0 z-50">
-        <div className="text-2xl font-bold text-paraherb-green tracking-wider font-[family-name:var(--font-playfair)]">
+        <div className="text-2xl font-bold text-paraherb-sage tracking-wider font-[family-name:var(--font-playfair)]">
           Paraherb
         </div>
-        <div className="hidden md:flex gap-6 text-paraherb-green font-medium">
-          <a href="#how-it-works" className="hover:text-paraherb-gold transition-colors">How it Works</a>
-          <a href="#products" className="hover:text-paraherb-gold transition-colors">Products</a>
-          <a href="#contact" className="hover:text-paraherb-gold transition-colors">Contact</a>
+        <div className="hidden md:flex gap-6 text-paraherb-charcoal font-medium">
+          <a href="#how-it-works" className="hover:text-paraherb-sage transition-colors">How it Works</a>
+          <a href="#products" className="hover:text-paraherb-sage transition-colors">Products</a>
+          <a href="#contact" className="hover:text-paraherb-sage transition-colors">Contact</a>
         </div>
-        <a href="tel:+919343414472" className="bg-paraherb-green text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-opacity-90 transition-all shadow-md">
+        <a href="tel:+919343414472" className="bg-paraherb-sage text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-opacity-90 transition-all shadow-md">
           Call Now
         </a>
       </nav>
 
       {/* Hero Section */}
       <section className="text-center py-20 px-4 max-w-4xl mx-auto flex-grow">
-        <span className="bg-paraherb-gold/20 text-paraherb-green px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide inline-block mb-6">
+        <span className="bg-paraherb-blush text-paraherb-charcoal px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide inline-block mb-6">
           100% Herbal & Natural
         </span>
-        <h1 className="text-4xl md:text-6xl font-bold text-paraherb-green mb-6 font-[family-name:var(--font-playfair)] leading-tight">
-          Herbal Care for Radiant Skin
+        <h1 className="text-4xl md:text-6xl font-bold text-paraherb-charcoal mb-6 font-[family-name:var(--font-playfair)] leading-tight">
+          Herbal Care for <span className="text-paraherb-sage">Radiant Skin</span>
         </h1>
         <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
           Scan your face with our smart AI to discover the perfect Paraherb formula for your unique skin concerns.
@@ -80,7 +79,7 @@ export default function Home() {
         <button 
           onClick={handleScan}
           disabled={isScanning}
-          className="bg-paraherb-green text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3 mx-auto disabled:opacity-70 disabled:hover:scale-100"
+          className="bg-paraherb-sage text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3 mx-auto disabled:opacity-70 disabled:hover:scale-100"
         >
           {isScanning ? (
             <span className="animate-pulse flex items-center gap-2">
@@ -99,8 +98,8 @@ export default function Home() {
       {/* Results Section */}
       {scanResult && (
         <section id="products" className="py-12 px-4 max-w-4xl mx-auto w-full">
-          <div className="bg-white rounded-3xl shadow-xl p-8 border border-paraherb-green/10 flex flex-col md:flex-row gap-8 items-center">
-            <div className="w-full md:w-1/3 bg-paraherb-cream rounded-2xl p-6 flex justify-center items-center">
+          <div className="bg-white rounded-3xl shadow-xl p-8 border border-paraherb-sage/20 flex flex-col md:flex-row gap-8 items-center">
+            <div className="w-full md:w-1/3 bg-paraherb-base rounded-2xl p-6 flex justify-center items-center">
               <div className="relative w-48 h-48">
                 <Image 
                   src={scanResult.image} 
@@ -111,17 +110,17 @@ export default function Home() {
               </div>
             </div>
             <div className="w-full md:w-2/3">
-              <span className="text-paraherb-gold font-bold text-sm tracking-wider uppercase">{scanResult.tag}</span>
-              <h2 className="text-3xl font-bold text-paraherb-green mt-2 mb-4 font-[family-name:var(--font-playfair)]">
+              <span className="text-paraherb-sage font-bold text-sm tracking-wider uppercase">{scanResult.tag}</span>
+              <h2 className="text-3xl font-bold text-paraherb-charcoal mt-2 mb-4 font-[family-name:var(--font-playfair)]">
                 {scanResult.name}
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">{scanResult.desc}</p>
               
               <div className="flex flex-wrap gap-4">
-                <button className="bg-paraherb-green text-white px-8 py-3 rounded-full font-semibold hover:bg-opacity-90 transition-all shadow-md">
+                <button className="bg-paraherb-sage text-white px-8 py-3 rounded-full font-semibold hover:bg-opacity-90 transition-all shadow-md">
                   Buy Now (100g / 50ml)
                 </button>
-                <a href="https://wa.me/919343414472" target="_blank" rel="noopener noreferrer" className="border-2 border-paraherb-green text-paraherb-green px-8 py-3 rounded-full font-semibold hover:bg-paraherb-green hover:text-white transition-all flex items-center gap-2">
+                <a href="https://wa.me/919343414472" target="_blank" rel="noopener noreferrer" className="border-2 border-paraherb-sage text-paraherb-sage px-8 py-3 rounded-full font-semibold hover:bg-paraherb-sage hover:text-white transition-all flex items-center gap-2">
                   <Phone size={18} /> Talk to Expert
                 </a>
               </div>
@@ -134,28 +133,28 @@ export default function Home() {
       <section className="py-16 bg-white mt-16">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
           <div className="p-6">
-            <Leaf className="mx-auto text-paraherb-green mb-4" size={40} />
-            <h3 className="text-xl font-bold text-paraherb-green mb-2">100% Herbal</h3>
+            <Leaf className="mx-auto text-paraherb-sage mb-4" size={40} />
+            <h3 className="text-xl font-bold text-paraherb-charcoal mb-2">100% Herbal</h3>
             <p className="text-gray-500 text-sm">Free from Parabens & Harmful Chemicals</p>
           </div>
           <div className="p-6">
-            <ShieldCheck className="mx-auto text-paraherb-green mb-4" size={40} />
-            <h3 className="text-xl font-bold text-paraherb-green mb-2">Trusted Quality</h3>
+            <ShieldCheck className="mx-auto text-paraherb-sage mb-4" size={40} />
+            <h3 className="text-xl font-bold text-paraherb-charcoal mb-2">Trusted Quality</h3>
             <p className="text-gray-500 text-sm">MSME: UDYAM-21-0012094</p>
           </div>
           <div className="p-6">
-            <Phone className="mx-auto text-paraherb-green mb-4" size={40} />
-            <h3 className="text-xl font-bold text-paraherb-green mb-2">Expert Support</h3>
+            <Phone className="mx-auto text-paraherb-sage mb-4" size={40} />
+            <h3 className="text-xl font-bold text-paraherb-charcoal mb-2">Expert Support</h3>
             <p className="text-gray-500 text-sm">Call: +91 9343414472</p>
           </div>
         </div>
       </section>
 
       {/* Footer / Contact */}
-      <footer id="contact" className="bg-paraherb-green text-white py-16 mt-auto">
+      <footer id="contact" className="bg-paraherb-charcoal text-white py-16 mt-auto">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-12">
           <div>
-            <h3 className="text-3xl font-bold mb-4 font-[family-name:var(--font-playfair)] text-paraherb-gold">Paraherb</h3>
+            <h3 className="text-3xl font-bold mb-4 font-[family-name:var(--font-playfair)] text-paraherb-blush">Paraherb</h3>
             <p className="text-gray-300 leading-relaxed">Herbal Face Care for Radiant Skin. Anti-Pimple | Anti-Acne | Golden Glow.</p>
           </div>
           <div>
