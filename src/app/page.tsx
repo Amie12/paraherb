@@ -3,7 +3,31 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Camera, ShieldCheck, Leaf, Phone, Mail, MapPin } from "lucide-react";
-import { PRODUCTS } from "@/data/products";
+
+// Product Data directly inside the file
+const PRODUCTS = {
+  acne: {
+    id: "acne",
+    name: "Anti-Pimple | Anti-Acne Skin Glow Formula",
+    desc: "Specifically formulated to fight active breakouts and prevent new ones. 100% Herbal & Natural.",
+    image: "/jar-image.jpg", 
+    tag: "Best Seller"
+  },
+  glow: {
+    id: "glow",
+    name: "Golden Glow Herbal Pack",
+    desc: "Restores radiance and deeply nourishes dull skin for a natural, healthy glow.",
+    image: "/golden-glow.jpg",
+    tag: "Radiance"
+  },
+  scar: {
+    id: "scar",
+    name: "Burn Scar Specialist",
+    desc: "Advanced herbal care targeting burn marks and tough scarring.",
+    image: "/burn-scar.jpg",
+    tag: "Specialized"
+  }
+};
 
 export default function Home() {
   const [isScanning, setIsScanning] = useState(false);
@@ -14,10 +38,8 @@ export default function Home() {
     setIsScanning(true);
     setScanResult(null);
     
-    // Simulating AI processing time
     setTimeout(() => {
       setIsScanning(false);
-      // Randomly assigning a result for demonstration purposes
       const results = [PRODUCTS.acne, PRODUCTS.glow, PRODUCTS.scar];
       const randomResult = results[Math.floor(Math.random() * results.length)];
       setScanResult(randomResult);
@@ -25,7 +47,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-paraherb-cream text-paraherb-text">
       
       {/* Navigation */}
       <nav className="flex justify-between items-center p-6 bg-white shadow-sm sticky top-0 z-50">
@@ -76,10 +98,9 @@ export default function Home() {
 
       {/* Results Section */}
       {scanResult && (
-        <section id="products" className="py-12 px-4 max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <section id="products" className="py-12 px-4 max-w-4xl mx-auto w-full">
           <div className="bg-white rounded-3xl shadow-xl p-8 border border-paraherb-green/10 flex flex-col md:flex-row gap-8 items-center">
             <div className="w-full md:w-1/3 bg-paraherb-cream rounded-2xl p-6 flex justify-center items-center">
-              {/* Product Image */}
               <div className="relative w-48 h-48">
                 <Image 
                   src={scanResult.image} 
